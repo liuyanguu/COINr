@@ -1073,9 +1073,15 @@ impute_panel <- function(iData, time_col = NULL, unit_col = NULL, cols = NULL, i
           message("NOTE: cannot impute for unit ", uCode, " and iCode ", iCode, " because all NA values.")
           next
         }
-
-        # impute with linear, and extremes are imputed with the closest value
-        y_imp <- stats::approx(x, y, xout = x, rule = 2, method = imp_type)$y
+        if (sum(!is.na(y)) == 1) {
+          message("NOTE: only 1 non-NA value for unit ", uCode,
+                  " and iCode ", iCode, " impute constant values using the non-NA value.")
+          # impute constant
+          y_imp <- rep(y[!na_positions], length(y))
+        } else {
+          # impute with linear, and extremes are imputed with the closest value
+          y_imp <- stats::approx(x, y, xout = x, rule = 2, method = imp_type)$y
+        }
         # check nothing changed in non-NA
         stopifnot(identical(y_imp[!na_positions], y[!na_positions]))
 
