@@ -510,6 +510,7 @@ Normalise <- function(x, ...){
   UseMethod("Normalise")
 }
 
+
 #' Minmax a vector
 #'
 #' Scales a vector using min-max method.
@@ -696,7 +697,8 @@ n_dist2ref <- function(x, iref, cap_max = FALSE){
 
 #' Normalise as distance to target
 #'
-#' A measure of the distance of each value of `x` to a specified target which can be a high or low target depending on `direction`. See details below.
+#' A measure of the distance of each value of `x` to a specified target which
+#' can be a high or low target depending on `direction`. See details below.
 #'
 #'
 #' If `direction = 1`, the formula is:
@@ -707,19 +709,24 @@ n_dist2ref <- function(x, iref, cap_max = FALSE){
 #'
 #' \deqn{ \frac{x_{max} - x}{x_{max} - x_{targ}} }
 #'
-#' Values surpassing `x_targ` in either case can be optionally capped at 1 if `cap_max = TRUE`.
+#' Values surpassing `x_targ` in either case can be optionally capped at 1 if
+#' `cap_max = TRUE`.
 #'
-#' This function also supports parameter specification in `iMeta` for the [Normalise.coin()] method.
-#' To do this, add columns `Target`, and `dist2targ_cap_max` to the `iMeta` table, which correspond
-#' to the `targ` and `cap_max` parameters respectively. Then set `f_n_para = "use_iMeta"` within the
-#' `global_specs` list. See also examples in the [normalisation vignette](https://bluefoxr.github.io/COINr/articles/normalise.html).
+#' This function also supports parameter specification in `iMeta` for the
+#' [Normalise.coin()] method. To do this, add columns `Target`, and
+#' `dist2targ_cap_max` to the `iMeta` table, which correspond to the `targ` and
+#' `cap_max` parameters respectively. Then set `f_n_para = "use_iMeta"` within
+#' the `global_specs` list. See also examples in the [normalisation
+#' vignette](https://bluefoxr.github.io/COINr/articles/normalise.html).
 #'
 #' @param x A numeric vector
 #' @param targ An target value
-#' @param direction Either 1 (default) or -1. In the former case, the indicator is assumed to be "positive" so that the target is at the higher
-#' end of the range. In the latter, the indicator is "negative" so that the target is typically at the low end of the range.
-#' @param cap_max If `TRUE`, any value of `x` that exceeds `targ` will be assigned a score of 1, otherwise
-#' will have a score greater than 1.
+#' @param direction Either 1 (default) or -1. In the former case, the indicator
+#'   is assumed to be "positive" so that the target is at the higher end of the
+#'   range. In the latter, the indicator is "negative" so that the target is
+#'   typically at the low end of the range.
+#' @param cap_max If `TRUE`, any value of `x` that exceeds `targ` will be
+#'   assigned a score of 1, otherwise will have a score greater than 1.
 #'
 #' @examples
 #' x <- runif(20)
@@ -954,14 +961,14 @@ n_goalposts <- function(x, gposts, direction = 1, trunc2posts = TRUE){
 get_iMeta_norm_paras <- function(coin, func_name){
 
   iMeta <- coin$Meta$Ind[coin$Meta$Ind$Type == "Indicator",]
-
   # define iMeta cols required by each normalisation method
   required_cols <- switch(
     func_name,
+    n_f_custom = c("Direction"),
+    n_dist2targ = c("Target", "dist2targ_cap_max", "Direction"),
     n_minmax = c("minmax_lower", "minmax_upper"),
     n_scaled = c("scaled_lower", "scaled_upper", "scale_factor", "Direction"),
     n_zscore = c("zscore_mean", "zscore_sd"),
-    n_dist2targ = c("Target", "dist2targ_cap_max", "Direction"),
     n_goalposts = c("goalpost_lower", "goalpost_upper", "goalpost_scale" , "Direction", "goalpost_trunc2posts"),
     stop("Your normalisation function '", func_name, "' does not have support for iMeta parameters. Check the list of supported functions in the Normalise.coin() documentation or manually build a parameter list using the indiv_specs argument.")
   )
@@ -999,12 +1006,13 @@ get_iMeta_norm_paras <- function(coin, func_name){
       paras <- iMeta[iMeta$iCode == names(l_n)[ii], c("Target", "Direction")]
       paras$dist2targ_cap_max <- FALSE
     } else {
-      paras <- iMeta[iMeta$iCode == names(l_n)[ii], required_cols]
+      paras <- iMeta[iMeta$iCode == names(l_n)[ii], required_cols, drop = FALSE] # drop = FALSE to keep as data frame
     }
 
     # add to list component
     l$f_n_para <- switch(
       func_name,
+      n_f_custom = list(direction = paras$Direction),
       n_minmax = list(l_u = c(paras$minmax_lower, paras$minmax_upper)),
       n_scaled = list(
         npara = if(paras$Direction == -1){
