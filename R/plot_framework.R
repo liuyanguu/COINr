@@ -52,7 +52,7 @@ plot_framework <- function(coin, type = "sunburst", colour_level = NULL,
   maxlev <- coin$Meta$maxlev
 
   # filter Level 1 ind by `ind_selected`
-  iMeta <- iMeta[(iMeta$Level != 1)| (iMeta$Level==1 & iMeta$iCode %in% ind_selected), ]
+  # iMeta <- iMeta[(iMeta$Level != 1)| (iMeta$Level==1 & iMeta$iCode %in% ind_selected), ]
 
   # if(text_label %nin% c("iCode", "iName")){
   #   stop("text_label must be either 'iCode' or 'iName'")
