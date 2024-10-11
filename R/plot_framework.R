@@ -132,7 +132,7 @@ plot_framework <- function(coin, type = "sunburst", colour_level = NULL,
   }
 
   # text
-  plt <- plt + ggplot2::geom_text(size = text_size, check_overlap = TRUE, position = ggplot2::position_stack(vjust = 0.5),
+  plt <- plt + ggplot2::geom_text(size = text_size, check_overlap = FALSE, position = ggplot2::position_stack(vjust = 0.5),
                      colour = text_colour)
 
   # alter to sunburst if needed
