@@ -105,10 +105,5 @@ This function replaces the now-defunct \code{plotCorr()} from COINr < v1.0.
 }
 \examples{
 # build example coin
-coin <- build_example_coin(up_to = "Normalise", quietly = TRUE)
-
-# plot correlations between indicators in Sust group, using Normalised dset
-plot_corr(coin, dset = "Normalised", iCodes = list("Sust"),
-          grouplev = 2, flagcolours = TRUE)
 
 }

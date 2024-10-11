@@ -31,16 +31,16 @@
 #'
 #' @examples
 #' # build example coin
-#' coin <- build_example_coin(up_to = "new_coin", quietly = TRUE)
-#'
-#' # plot framework as sunburst, colouring at level 2 upwards
-#' plot_framework(coin, colour_level = 2, transparency = TRUE)
+# coin <- build_example_coin(up_to = "new_coin", quietly = TRUE)
+#
+# # plot framework as sunburst, colouring at level 2 upwards
+# plot_framework(coin, colour_level = 2, transparency = TRUE)
 #'
 #' @return A ggplot2 plot object
 #' @export
 plot_framework <- function(coin, type = "sunburst", colour_level = NULL,
                            text_colour = NULL, text_size = NULL, transparency = TRUE,
-                           text_label = "iCode"){
+                           text_label = "iCode", ind_selected = NULL){
 
   # CHECKS ------------------------------------------------------------------
 
@@ -51,8 +51,14 @@ plot_framework <- function(coin, type = "sunburst", colour_level = NULL,
   iMeta <- coin$Meta$Ind[!is.na(coin$Meta$Ind$Level), ]
   maxlev <- coin$Meta$maxlev
 
-  if(text_label %nin% c("iCode", "iName")){
-    stop("text_label must be either 'iCode' or 'iName'")
+  # filter Level 1 ind by `ind_selected`
+  iMeta <- iMeta[(iMeta$Level != 1)| (iMeta$Level==1 & iMeta$iCode %in% ind_selected), ]
+
+  # if(text_label %nin% c("iCode", "iName")){
+  #   stop("text_label must be either 'iCode' or 'iName'")
+  # }
+  if(text_label %nin% names(coin$Meta$Ind)){
+    stop("text_label must be a defined column in the iMeta data frame")
   }
 
   # DEFAULTS ----------------------------------------------------------------

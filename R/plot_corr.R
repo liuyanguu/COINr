@@ -58,11 +58,11 @@
 #'
 #' @examples
 #' # build example coin
-#' coin <- build_example_coin(up_to = "Normalise", quietly = TRUE)
-#'
-#' # plot correlations between indicators in Sust group, using Normalised dset
-#' plot_corr(coin, dset = "Normalised", iCodes = list("Sust"),
-#'           grouplev = 2, flagcolours = TRUE)
+# coin <- build_example_coin(up_to = "Normalise", quietly = TRUE)
+#
+# # plot correlations between indicators in Sust group, using Normalised dset
+# plot_corr(coin, dset = "Normalised", iCodes = list("Sust"),
+#           grouplev = 2, flagcolours = TRUE)
 #'
 #' @return A plot object generated with ggplot2, which can be edited further with ggplot2 commands.
 #'
@@ -154,22 +154,26 @@ plot_corr <- function(coin, dset, iCodes = NULL, Levels = 1, ..., cortype = "pea
               length(order_as) == 2,
               is.character(order_as[[1]]),
               is.character(order_as[[2]]))
-    if(length(order_as[[1]]) != length(ord1)){
-      stop("Error in length of order_as[[1]]: expected length = ", length(ord1))
-    }
-    if(length(order_as[[2]]) != length(ord2)){
-      stop("Error in length of order_as[[2]]: expected length = ", length(ord2))
-    }
-    if(!setequal(order_as[[1]], ord1)){
-      stop("Expected iCodes not found in order_as[[1]] - expected codes are: ", paste(ord1, collapse = ", "))
-    }
-    if(!setequal(order_as[[2]], ord2)){
-      stop("Expected iCodes not found in order_as[[2]] - expected codes are: ", paste(ord2, collapse = ", "))
-    }
+    # if(length(order_as[[1]]) != length(ord1)){
+    #   stop("Error in length of order_as[[1]]: expected length = ", length(ord1))
+    # }
+    # if(length(order_as[[2]]) != length(ord2)){
+    #   stop("Error in length of order_as[[2]]: expected length = ", length(ord2))
+    # }
+    # if(!setequal(order_as[[1]], ord1)){
+    #   stop("Expected iCodes not found in order_as[[1]] - expected codes are: ", paste(ord1, collapse = ", "))
+    # }
+    # if(!setequal(order_as[[2]], ord2)){
+    #   stop("Expected iCodes not found in order_as[[2]] - expected codes are: ", paste(ord2, collapse = ", "))
+    # }
 
     ord1 <- order_as[[1]]
     ord2 <- order_as[[2]]
   }
+
+  # also filter variables using ord1 and ord2
+  crtable <- crtable[crtable$Var1 %in% ord1 & crtable$Var2 %in% ord2,]
+  message("Plotting correlations for ", length(unique(crtable$Var1)), " indicators: ", paste(unique(crtable$Var1), collapse = ", "))
 
   if (flagcolours){
 
